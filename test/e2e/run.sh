@@ -18,13 +18,15 @@ if ! [ -z $DEBUG ]; then
 	set -x
 fi
 
-set -e
+set -o errexit
+set -o nounset
+set -o pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-TAG=dev
-ARCH=amd64
-REGISTRY=${REGISTRY:-ingress-controller}
+export TAG=dev
+export ARCH=amd64
+export REGISTRY=ingress-controller
 
 KIND_CLUSTER_NAME="ingress-nginx-dev"
 
@@ -35,8 +37,6 @@ kind create cluster --name ${KIND_CLUSTER_NAME} --config ${DIR}/kind.yaml
 
 export KUBECONFIG="$(kind get kubeconfig-path --name="${KIND_CLUSTER_NAME}")"
 
-sleep 10
-
 echo "Kubernetes cluster:"
 kubectl get nodes -o wide
 
@@ -46,8 +46,9 @@ echo "[dev-env] building container"
 make -C ${DIR}/../../ build container
 make -C ${DIR}/../../ e2e-test-image
 
-echo "copying docker images to cluster..."
-kind load docker-image --name="${KIND_CLUSTER_NAME}" ${REGISTRY}/nginx-ingress-controller:${TAG}
+echo "[dev-env] copying docker images to cluster..."
 kind load docker-image --name="${KIND_CLUSTER_NAME}" nginx-ingress-controller:e2e
+kind load docker-image --name="${KIND_CLUSTER_NAME}" ${REGISTRY}/nginx-ingress-controller:${TAG}
 
+echo "[dev-env] running e2e tests..."
 make -C ${DIR}/../../ e2e-test
