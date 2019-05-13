@@ -183,15 +183,6 @@ lua-test:
 
 .PHONY: e2e-test
 e2e-test:
-	if  [ "$(KUBECTL_CONTEXT)" != "minikube" ] && \
-		! echo $(KUBECTL_CONTEXT) | grep kind && \
-		! echo $(KUBECTL_CONTEXT) | grep ingress-nginx-dev && \
-		[ "$(KUBECTL_CONTEXT)" != "dind" ] && \
-		[ "$(KUBECTL_CONTEXT)" != "docker-for-desktop" ]; then \
-		echo "kubectl context is "$(KUBECTL_CONTEXT)", but must be one of [minikube, *kind*, *ingress-nginx-dev*, dind, docker-for-deskop]"; \
-		exit 1; \
-	fi
-
 	echo "Granting permissions to ingress-nginx e2e service account..."
 	kubectl create serviceaccount ingress-nginx-e2e || true
 	kubectl create clusterrolebinding permissive-binding \

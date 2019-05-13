@@ -17,6 +17,9 @@
 set -o errexit
 set -o nounset
 set -o pipefail
+set -x
+
+echo $PWD
 
 resty \
   -I ./rootfs/etc/nginx/lua \
