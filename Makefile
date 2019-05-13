@@ -213,13 +213,13 @@ e2e-test-image:
 .PHONY: e2e-test-binary
 e2e-test-binary:
 	@$(DEF_VARS)                 \
-	DOCKER_OPTS="-i --net=host"  \
+	DOCKER_OPTS="--net=host" \
 	build/go-in-docker.sh build/build-e2e.sh
 
 .PHONY: cover
 cover:
 	@$(DEF_VARS)                 \
-	DOCKER_OPTS="-i --net=host"  \
+	DOCKER_OPTS="--net=host"  \
 	build/go-in-docker.sh build/cover.sh
 
 	echo "Uploading coverage results..."
